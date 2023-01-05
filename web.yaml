@@ -18,19 +18,20 @@
       user:
         name: "{{ app_name }}"
 
-    - name: Clone source code project
-      git:
-        repo: "{{ repo_url }}"
-        dest: "/usr/local/src/{{ app_name }}"
-      notify:
-        - Publish project
-
     - name: Copy Kestrel service definition file
       copy:
         src: "files/{{ app_name }}.service"
         dest: "/etc/systemd/system/{{ app_name }}.service"
       notify:
         - Reload daemon
+        - Restart Kestrel service
+
+    - name: Clone source code project
+      git:
+        repo: "{{ repo_url }}"
+        dest: "/usr/local/src/{{ app_name }}"
+      notify:
+        - Publish project
         - Restart Kestrel service
 
     - name: Start and enable Kestrel service
